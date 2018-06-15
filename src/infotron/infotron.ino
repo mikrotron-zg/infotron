@@ -5,12 +5,16 @@
   Finaly, select Tools->Port->[Port number, e.g. COM1, dev/ttyUSB0 etc.]
   Also, set your Serial Monitor baud rate to 115200.*/
 
-#include "credentials.h" //enter your wifi credentials in this file first
+#include "credentials.h" // enter your wifi credentials in this file first
+#include "web_page.h" // web page content
 #include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
 #include <MD_Parola.h> 
 #include <MD_MAX72xx.h>
 #include <SPI.h>
 #include <Ticker.h> 
+
+ESP8266WebServer web_server(80); // web server on port 80
 
 /* Define the number of devices we have in the chain and the hardware interface
    NOTE: These pin numbers are for Croduino NOVA hardware SPI and will probably not
@@ -56,6 +60,8 @@ void checkConnection(){
     prnt(WiFi.localIP());
     sprintf(newMessage, "%03d.%03d.%03d.%03d", WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3]);
     newMessageAvailable = true;
+    web_server.on("/", handleWebRequest); // define web server handler
+    web_server.begin(); // start web server
     start = false;
     timer.detach();
   }
@@ -72,6 +78,12 @@ void wifiTimeout(){
   }
   prnt("\nTimer triggered!");
   timer.detach();
+}
+
+void handleWebRequest(){
+  // What to do with GET request
+  String content = WEB_PAGE; // read web page content
+  web_server.send(200, "text/html", content); // replay
 }
 
 void setup() {
@@ -99,6 +111,8 @@ void setup() {
 void loop() {
 
   if (start) checkConnection();
+  
+  web_server.handleClient();
   
   if (mdp.displayAnimate()) {
     if(newMessageAvailable){
