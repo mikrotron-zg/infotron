@@ -34,8 +34,8 @@ textEffect_t scrollEffect = PA_SCROLL_LEFT;
 textPosition_t scrollAlign = PA_LEFT;
 uint16_t scrollPause = 20; // in milliseconds
 
-// Global message buffers shared by Wifi and Scrolling functions
-#define BUF_SIZE  512
+// Global message buffers
+#define BUF_SIZE  1024 // buffer size that should be able to handle data
 char curMessage[BUF_SIZE] = {"Infotron starting..."};
 char newMessage[BUF_SIZE] = {""};
 bool newMessageAvailable = false;
@@ -60,7 +60,8 @@ void checkConnection(){
     prnt(WiFi.localIP());
     sprintf(newMessage, "%03d.%03d.%03d.%03d", WiFi.localIP()[0], WiFi.localIP()[1], WiFi.localIP()[2], WiFi.localIP()[3]);
     newMessageAvailable = true;
-    web_server.on("/", handleWebRequest); // define web server handler
+    web_server.on("/", HTTP_GET, handleWebRequest); // define web server root handler
+    web_server.on("/infotron", HTTP_POST, handlePostRequest); // define POST request handler
     web_server.begin(); // start web server
     start = false;
     timer.detach();
@@ -81,9 +82,36 @@ void wifiTimeout(){
 }
 
 void handleWebRequest(){
-  // What to do with GET request
+  // handle root web request - return web page
+  prnt("\nReceived root web request");
   String content = WEB_PAGE; // read web page content
   web_server.send(200, "text/html", content); // replay
+
+}
+
+void handlePostRequest(){
+  // handle web site POST request
+  prnt("\nReceived POST request");
+  web_server.send(200, "text/plain", "OK"); // we're just letting the client know we've received the request
+  
+  if(web_server.hasArg("time")){
+    prnt(" for date/time display.");
+    //TODO: call date/time display function
+  } else if (web_server.hasArg("weather")){
+    prnt(" for weather display.");
+    //TODO: call weather display function
+  } else if (web_server.hasArg("crypto")){
+    prnt(" for crypto currency display.");
+    //TODO: call crypto currency display function
+  } else if (web_server.hasArg("text")){
+    prnt(" for custom text display.");
+    strcpy(newMessage, web_server.arg("text").c_str());
+    newMessageAvailable = true;
+  } else {
+    prnt(" - unknown message.");
+    //TODO: display error message
+  }
+  
 }
 
 void setup() {

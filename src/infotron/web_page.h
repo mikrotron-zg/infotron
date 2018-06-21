@@ -9,6 +9,16 @@ const char WEB_PAGE[] PROGMEM = R"=====(
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+    <script>function SendData(){
+      strLine = "";
+      if (document.getElementById("optTime").checked) strLine = "time=1";
+      if (document.getElementById("optWeather").checked) strLine =  "weather=1";
+      if (document.getElementById("optCrypto").checked) strLine = "crypto=1";
+      if (document.getElementById("optText").checked) strLine = "text=" + document.getElementById("txt").value;
+      $.post("infotron?" + strLine);
+      document.getElementById("apply").blur();
+      }
+    </script>
   </head>
   <body>
     <div class="container-fluid">
@@ -19,27 +29,27 @@ const char WEB_PAGE[] PROGMEM = R"=====(
       </br>
       <div class="form-check">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio">Date/Time
+          <input type="radio" id="optTime" class="form-check-input" name="optradio" checked="true">Date/Time
         </label>
       </div>
       <div class="form-check">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio">Weather info
+          <input type="radio" id="optWeather" class="form-check-input" name="optradio">Weather info
         </label>
       </div>
       <div class="form-check">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio">Crypto currency
+          <input type="radio" id="optCrypto" class="form-check-input" name="optradio">Crypto currency
         </label>
       </div>
       <div class="form-check">
         <label class="form-check-label">
-          <input type="radio" class="form-check-input" name="optradio">Text:
+          <input type="radio" id="optText" class="form-check-input" name="optradio">Text:
         </label>
         <input type="text" id="txt" name="text">
       </div>
       </br>
-      <input type="submit" class="btn btn-primary" value="Apply">
+      <input type="submit" id="apply" class="btn btn-primary" onclick="SendData()" value="Apply">
     </div>
   </body>
 </html>
