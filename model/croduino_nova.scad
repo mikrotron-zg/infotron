@@ -34,7 +34,7 @@ btn_x = 2.0;
 btn_y = 1.0;
 
 // Entry point, uncomment the line bellow to see the object
-croduino_nova();
+//croduino_nova();
 
 module croduino_nova(){
     nova_board();

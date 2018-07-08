@@ -24,7 +24,7 @@ module_pcb_header_y = led_matrix_width/2 - 12.7/2;
 module_pcb_header_z = 5;
 
 // Entry point, uncomment the line bellow to see the object
-led_matrix_32x8();
+//led_matrix_32x8();
 
 module led_matrix_32x8(){
     draw_pcb();
@@ -38,7 +38,7 @@ module draw_pcb(){
     difference(){
         color("SteelBlue") cube([4*led_matrix_width, led_matrix_width, module_pcb_height]);
         for(i = [0 : 3])
-            translate(module_pcb_hole_pos[i]) cylinder(d=module_pcb_hole_dia, h=module_pcb_height + 2*ex);
+            translate(module_pcb_hole_pos[i]) cylinder(d=module_pcb_hole_dia, h=module_pcb_height + 2*ex, $fn=25);
     }
     
 }
