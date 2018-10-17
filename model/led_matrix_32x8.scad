@@ -3,7 +3,7 @@
 include <common.scad>;
 
 // LED matrix
-led_matrix_width = 32.0;
+led_matrix_width = 32.25;
 led_matrix_height = 6.2;
 led_matrix_offset = 5.0; // offset from PCB varies, this is mean value
 
