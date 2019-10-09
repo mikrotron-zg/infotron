@@ -28,25 +28,21 @@ const char WEB_PAGE[] PROGMEM = R"=====(
       <h4>Select what to display</h4>
       </br>
       <div class="form-check">
-        <label class="form-check-label">
-          <input type="radio" id="optTime" class="form-check-input" name="optradio" checked="true">Date/Time
-        </label>
+        <input type="radio" id="optTime" class="form-check-input" name="optradio" disabled>
+        <label class="form-check-label">Date/Time</label>
       </div>
       <div class="form-check">
-        <label class="form-check-label">
-          <input type="radio" id="optWeather" class="form-check-input" name="optradio">Weather info
-        </label>
+        <input type="radio" id="optWeather" class="form-check-input" name="optradio" disabled>
+        <label class="form-check-label">Weather info</label>
       </div>
       <div class="form-check">
-        <label class="form-check-label">
-          <input type="radio" id="optCrypto" class="form-check-input" name="optradio">Crypto currency
-        </label>
+        <input type="radio" id="optCrypto" class="form-check-input" name="optradio" disabled>
+        <label class="form-check-label">Crypto currency rates</label>
       </div>
       <div class="form-check">
-        <label class="form-check-label">
-          <input type="radio" id="optText" class="form-check-input" name="optradio">Text:
-        </label>
-        <input type="text" id="txt" name="text">
+        <input type="radio" id="optText" class="form-check-input" name="optradio" checked="true">
+        <label class="form-check-label">Text:</label>
+        <input type="text" id="txt" name="text" autofocus>
       </div>
       </br>
       <input type="submit" id="apply" class="btn btn-primary" onclick="SendData()" value="Apply">
