@@ -31,9 +31,9 @@ module infotron_box(){
     color ("Blue") draw_top();
     translate([screen_border, screen_border + led_matrix_width, led_matrix_height + led_matrix_offset + module_pcb_height]) rotate([180, 0, 0]) #%led_matrix_32x8();
     }
-    draw_bottom();
-    translate([screen_border, screen_border, screen_raised]) #%led_matrix_32x8();
-    translate([box_length - wall2, box_width/2 + nova_width/2, nova_raised + wall2]) rotate(180) #%croduino_nova();
+//    draw_bottom();
+//    translate([screen_border, screen_border, screen_raised]) #%led_matrix_32x8();
+//    translate([box_length - wall2, box_width/2 + nova_width/2, nova_raised + wall2]) rotate(180) #%croduino_nova();
 }
 
 module draw_bottom(){
@@ -109,13 +109,13 @@ module top_shell(){
         rounded_rect(box_length, box_width, box_top_height);
         translate([wall, wall, wall])
             cube([box_length - 2*wall, box_width - 2*wall, box_top_height - wall + ex]);
-        translate([screen_border, screen_border, -ex])
+        translate([screen_border, screen_border, 0.3])
             cube([4*led_matrix_width, led_matrix_width, wall + 2*ex]);
         translate([box_length - nova_length/2, box_width - screen_border, -ex]) top_text();
     }
 }
 
-module screen_bracket(bracket_height = 2){
+module screen_bracket(bracket_height = 3){
     // Draw bracket
     difference(){
         cube([4*led_matrix_width + 2*wall, led_matrix_width + 2*wall, bracket_height]);
