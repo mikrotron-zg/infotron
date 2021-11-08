@@ -1,121 +1,119 @@
 // Infotron box 3D model by Mikrotron d.o.o.
 
 include<led_matrix_32x8.scad>;
-include<croduino_nova.scad>;
+include<mini32.scad>;
+
 
 // Box dimensions
-wall = 1.0; // box wall width
-wall2 = 1.75*wall; // thicker box wall
+wall = 1.2; // box wall width
+wall2 = 1.5*wall; // thicker box wall
 screen_border = 2*wall + 1.0; // screen border width
 box_width = led_matrix_width + 2*screen_border;
-box_length = screen_border + 4*led_matrix_width + nova_length;
-box_top_height = led_matrix_height + led_matrix_offset + module_pcb_height + 3; 
-box_bottom_height = 9 + wall2;
+box_length = screen_border + 4*led_matrix_width + 50;
+box_top_height = led_matrix_height + led_matrix_offset + module_pcb_height + wall + 0.4; 
+box_bottom_height = 8 + wall2;
 box_overlap_height = 5;
+slit_height = 1.5;
+slit_width = wall/2;
 
-// Modules inside the box
-nova_raised = 2.4; // how much is nova raised from the bottom
-screen_raised = box_bottom_height + 3; // how much is screen raised from the bottom
-
-// Screen bracket clip
-screen_clip_length = 5.0;
-screen_clip_width = screen_border - wall2;
-screen_clip_ledge = 0.6;
-
+// ESP32 mount dimensions
+esp32_mount_width = 6;
+esp32_mount_height = box_top_height - wall2;
+esp32_mount_offset = 1;
+esp32_mount_corner = esp32_mount_width - esp32_mount_offset;
 
 // Entry point
 infotron_box();
 
 module infotron_box(){
-    translate([0, 1.2*box_width, 0]){
-    color ("Blue") draw_top();
-    translate([screen_border, screen_border + led_matrix_width, led_matrix_height + led_matrix_offset + module_pcb_height]) rotate([180, 0, 0]) #%led_matrix_32x8();
-    }
-//    draw_bottom();
-//    translate([screen_border, screen_border, screen_raised]) #%led_matrix_32x8();
-//    translate([box_length - wall2, box_width/2 + nova_width/2, nova_raised + wall2]) rotate(180) #%croduino_nova();
+    // Draws bottom and top part of the box, comment out one or the other for single object
+    draw_bottom();
+    translate([0, 1.2*box_width, 0]) draw_top();
 }
 
-module draw_bottom(){
-    bottom_shell();
-    translate([screen_border, screen_border, wall2]) screen_distancers();
-    screen_clips();
-    nova_mount();
-}
-
-module nova_mount(){
-    groove = 0.5;
-    translate([box_length - nova_length - wall2, box_width/2 - nova_width/2 - wall2 + groove, wall2]){
-        difference(){
-            cube([nova_length, wall2, nova_raised + nova_height + 2]);
-            translate([0, wall2 - groove, nova_raised])
-                cube([nova_length, groove + ex, nova_height + 0.4]);
-        }
-        translate([-wall2, 0, 0]) cube([wall2, wall2 + 2, nova_raised + nova_height]);
-        translate([0, nova_width + groove, 0]){
-            difference(){
-            cube([nova_length, wall2, nova_raised + nova_height + 2]);
-            translate([0, -ex, nova_raised])
-                cube([nova_length, groove + ex, nova_height + 0.4]);
+module draw_bottom() {
+    color ("White") difference() {
+        union(){
+            bottom_shell();
+            // Overlap wall
+            translate([wall, wall, wall2]) difference() {
+                overlap();
+                translate([box_length - 3*wall - ex, box_width/2 - mini32_width/2 - wall,
+                            box_bottom_height - wall2])
+                    cube([4*wall, mini32_width - mini32_reset_width, 
+                            box_overlap_height + ex]);
             }
-            translate([-wall2, -2, 0]) cube([wall2, wall2 + 2, nova_raised + nova_height]);
+            translate([box_length - wall, box_width/2 - mini32_width/2, wall2]) 
+                esp32_fixers();
+            translate([screen_border + led_matrix_width/2 - esp32_mount_width/2,
+                        box_width/2 - esp32_mount_width/2, wall2])
+                led_matrix_fixers();
         }
+        // USB cutout
+        translate([box_length - 2*wall - ex, 
+                   box_width/2 - mini32_usb_width/2 - 1,
+                   box_bottom_height - mini32_usb_height - 1])
+            cube([3*wall, mini32_usb_width + 2, mini32_usb_height + 1 + ex]);
     }
 }
 
-module screen_clips(){
-    clip_x1 = screen_border + module_pcb_hole_pos[0][0];
-    clip_x2 = screen_border + module_pcb_hole_pos[1][0];
-    clip_y = box_width - wall2;
-    
-    translate([clip_x1, wall2, wall2]) screen_clip();
-    translate([clip_x2, wall2, wall2]) screen_clip();
-    translate([clip_x1, clip_y, wall2]) rotate(180) screen_clip();
-    translate([clip_x2, clip_y, wall2]) rotate(180) screen_clip();
-}
-
-module screen_distancers(){
-    for(i = [0 : 3]){
-            translate(module_pcb_hole_pos[i]){
-                cylinder(r1 = 3.5, r2 = 2.5, h = screen_raised - wall2, $fn=25);
-                translate([0, 0, screen_raised - wall2]) 
-                    cylinder(d = 3, h = module_pcb_height + 1, $fn=25);
-            }
-    }
-}
-
-module bottom_shell(){
+module bottom_shell() {
     difference(){
         rounded_rect(box_length, box_width, box_bottom_height);
-        translate([wall2, wall2, wall2])
-            cube([box_length - 2*wall2, box_width - 2*wall2, box_bottom_height - wall2 + ex]);
-        translate([box_length - wall2 - ex, box_width/2 - usb_length/2 - 0.5, nova_raised + wall2 + nova_height - 0.5])
-            cube([wall2 + 2*ex, usb_length + 1, usb_height + 1]);
+        translate([wall, wall, wall2])
+             cube([box_length - 2*wall, box_width - 2*wall, 
+                    box_bottom_height - wall2 + ex]);
     }
-    translate([wall, wall, box_bottom_height]) difference(){
-        cube([box_length - 2*wall, box_width - 2*wall, box_overlap_height]);
-        translate([wall2 - wall, wall2 - wall, -ex])
-            cube([box_length - 2*wall2, box_width - 2*wall2, box_overlap_height + 2*ex]);
+}
+
+module overlap() {
+    inner_wall_height = box_bottom_height - wall2;
+    difference() {
+        cube([box_length - 2*wall, box_width - 2*wall, 
+                inner_wall_height + box_overlap_height]);
+        translate([wall, wall, -ex])
+            cube([box_length - 4*wall, box_width - 4*wall,
+                   inner_wall_height + box_overlap_height + 2*ex]);
+    }
+    translate([-slit_width, -slit_width, 
+                inner_wall_height + box_overlap_height - slit_height]) difference() {
+        cube ([box_length - 2*slit_width, box_width - 2*slit_width, slit_height]);
+        translate([slit_width, slit_width, -ex])
+            cube([box_length - 4*slit_width, box_width - 4*slit_width, 
+                    slit_height + 2*ex]);
     }
 }
 
 module draw_top(){
-    top_shell();
-    translate([screen_border - wall, screen_border - wall, wall]) screen_bracket();
+    color ("White") {
+        top_shell();
+        translate([screen_border - wall, screen_border - wall, wall]) screen_bracket();
+        translate([box_length - wall, box_width/2 + mini32_width/2, wall2])
+            rotate(180) esp32_mount();
+    }
+    translate([screen_border, screen_border + led_matrix_width, led_matrix_height + led_matrix_offset + module_pcb_height]) 
+            rotate([180, 0, 0]) %led_matrix_32x8();
+    translate([box_length - 2*wall, box_width/2 + mini32_width/2, box_top_height - mini32_height])
+            rotate(180) %mini32();
 }
 
 module top_shell(){
     difference(){
         rounded_rect(box_length, box_width, box_top_height);
-        translate([wall, wall, wall])
-            cube([box_length - 2*wall, box_width - 2*wall, box_top_height - wall + ex]);
-        translate([screen_border, screen_border, 0.3])
-            cube([4*led_matrix_width, led_matrix_width, wall + 2*ex]);
-        translate([box_length - nova_length/2, box_width - screen_border, -ex]) top_text();
+        translate([wall, wall, wall2])
+            cube([box_length - 2*wall, box_width - 2*wall, box_top_height - wall2 + ex]);
+        // Slit
+        translate([slit_width, slit_width, box_top_height - box_overlap_height])
+            cube([box_length - 2*slit_width, box_width - 2*slit_width, slit_height]);
+        // Screen diffuser
+        translate([screen_border, screen_border, 0.4])
+            cube([4*led_matrix_width, led_matrix_width, wall2 + 2*ex]);
+        // Engraved text
+        translate([box_length - 50/2, box_width - screen_border, -ex]) top_text();
     }
 }
 
-module screen_bracket(bracket_height = 3){
+module screen_bracket(bracket_height = 4){
     // Draw bracket
     difference(){
         cube([4*led_matrix_width + 2*wall, led_matrix_width + 2*wall, bracket_height]);
@@ -124,15 +122,43 @@ module screen_bracket(bracket_height = 3){
     }
 }
 
-module screen_clip(){
-    translate([-screen_clip_length/2, 0, 0]){
-        cube([screen_clip_length, screen_clip_width, screen_raised - wall2 + module_pcb_height + screen_clip_ledge]);
-        translate([0, screen_clip_width, screen_raised - wall2 + module_pcb_height + screen_clip_ledge]) rotate([0, 90, 0])
-            linear_extrude(height = screen_clip_length) polygon([[0, 0], [screen_clip_ledge, 0], [0, screen_clip_ledge]]);
+module top_text(){
+    rotate([180, 0, 0]) translate([0, 0, -0.6]) linear_extrude(height = 0.6)
+        text("infotron", size = 8, font = "Liberation Sans", halign = "center",                valign = "bottom");
+}
+
+module esp32_mount() {
+    translate([mini32_length - esp32_mount_corner + wall, -esp32_mount_offset, 0])
+        esp32_pillar_mount();
+    translate([mini32_length + esp32_mount_offset + wall, mini32_width - esp32_mount_corner, 0])
+        rotate(90) esp32_pillar_mount();
+    translate([0, -esp32_mount_offset, 0]) difference() {
+        cube([esp32_mount_corner, mini32_width - mini32_reset_width + 2*esp32_mount_offset, esp32_mount_height]);
+        translate([wall, esp32_mount_offset, esp32_mount_height - mini32_height])
+            cube([esp32_mount_corner, mini32_width - mini32_reset_width, mini32_height + ex]);
     }
 }
 
-module top_text(){
-    rotate([180, 0, 0]) translate([0, 0, -0.3]) linear_extrude(height = 0.3)
-        text("infotron", size = 8, font = "Liberation Sans", halign = "center",                valign = "bottom");
+module esp32_pillar_mount() {
+    difference() {
+        cube([esp32_mount_width, esp32_mount_width, esp32_mount_height]);
+        translate([0, 1, esp32_mount_height - mini32_height])
+            cube([esp32_mount_corner, esp32_mount_corner, mini32_height + ex]);
+    }
+}
+
+module esp32_fixers() {
+    corr = 0.5; // just for practical reasons to join fixers with inner wall
+    translate([-mini32_length - esp32_mount_offset, -esp32_mount_offset - corr, 0])
+        cube([esp32_mount_width, esp32_mount_width, box_bottom_height - wall2]);
+    translate([-mini32_length - esp32_mount_offset, 
+                mini32_width - esp32_mount_width + esp32_mount_offset + corr, 0])
+        cube([esp32_mount_width, esp32_mount_width, box_bottom_height - wall2]);
+}
+
+module led_matrix_fixers() {
+    for (i = [0 : 3]) {
+        translate([i*led_matrix_width, 0, 0])
+            cube([esp32_mount_width, esp32_mount_width, box_bottom_height - wall2]);
+    }
 }
