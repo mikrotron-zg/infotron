@@ -5,9 +5,9 @@ include<mini32.scad>;
 
 
 // Box dimensions
-wall = 1.2; // box wall width
-wall2 = 1.5*wall; // thicker box wall
-screen_border = 2*wall + 1.0; // screen border width
+wall = 1.6; // box wall width
+wall2 = 1.25*wall; // thicker box wall
+screen_border = 2*wall + 3.0; // screen border width
 box_width = led_matrix_width + 2*screen_border;
 box_length = screen_border + 4*led_matrix_width + 50;
 box_top_height = led_matrix_height + led_matrix_offset + module_pcb_height + wall + 0.4; 
@@ -36,14 +36,8 @@ module draw_bottom() {
         union(){
             bottom_shell();
             // Overlap wall
-            translate([wall, wall, wall2]) difference() {
-                overlap();
-                translate([box_length - 3*wall - ex, box_width/2 - mini32_width/2 - wall,
-                            box_bottom_height - wall2])
-                    cube([4*wall, mini32_width - mini32_reset_width, 
-                            box_overlap_height + ex]);
-            }
-            translate([box_length - wall, box_width/2 - mini32_width/2, wall2]) 
+            translate([wall, wall, wall2]) overlap();
+            translate([box_length, box_width/2 - mini32_width/2, wall2]) 
                 esp32_fixers();
             translate([screen_border + led_matrix_width/2 - esp32_mount_width/2,
                         box_width/2 - esp32_mount_width/2, wall2])
@@ -54,6 +48,11 @@ module draw_bottom() {
                    box_width/2 - mini32_usb_width/2 - 1,
                    box_bottom_height - mini32_usb_height - 1])
             cube([3*wall, mini32_usb_width + 2, mini32_usb_height + 1 + ex]);
+        // Removing corners
+        translate([0, 0, box_bottom_height]) 
+            cube([4*wall, 4*wall, box_overlap_height + ex]);
+        translate([0, box_width - 4*wall, box_bottom_height]) 
+            cube([4*wall, 4*wall, box_overlap_height + ex]);
     }
 }
 
@@ -72,16 +71,25 @@ module overlap() {
         cube([box_length - 2*wall, box_width - 2*wall, 
                 inner_wall_height + box_overlap_height]);
         translate([wall, wall, -ex])
-            cube([box_length - 4*wall, box_width - 4*wall,
+            cube([box_length - 2*wall, box_width - 4*wall,
                    inner_wall_height + box_overlap_height + 2*ex]);
     }
-    translate([-slit_width, -slit_width, 
-                inner_wall_height + box_overlap_height - slit_height]) difference() {
-        cube ([box_length - 2*slit_width, box_width - 2*slit_width, slit_height]);
-        translate([slit_width, slit_width, -ex])
-            cube([box_length - 4*slit_width, box_width - 4*slit_width, 
-                    slit_height + 2*ex]);
+    translate([0, 0, inner_wall_height + box_overlap_height - 0.75*slit_height]) clips();
+}
+
+module clips() {
+    clip_length = 5;
+    translate([0, box_width/2 - wall - clip_length/2, 0])
+        rotate(90) clip(clip_length);
+    for (i = [1 : 5]) {
+        translate([i*(box_length - 2*wall)/6, -slit_width, 0]) clip(clip_length);
+        translate([i*(box_length - 2*wall)/6, box_width - 2*wall, 0]) 
+            clip(clip_length);
     }
+}
+
+module clip(length) {
+    cube([length, slit_width, 0.75*slit_height]);
 }
 
 module draw_top(){
@@ -93,7 +101,7 @@ module draw_top(){
     }
     translate([screen_border, screen_border + led_matrix_width, led_matrix_height + led_matrix_offset + module_pcb_height]) 
             rotate([180, 0, 0]) %led_matrix_32x8();
-    translate([box_length - 2*wall, box_width/2 + mini32_width/2, box_top_height - mini32_height])
+    translate([box_length - wall, box_width/2 + mini32_width/2, box_top_height - mini32_height])
             rotate(180) %mini32();
 }
 
@@ -128,13 +136,13 @@ module top_text(){
 }
 
 module esp32_mount() {
-    translate([mini32_length - esp32_mount_corner + wall, -esp32_mount_offset, 0])
+    translate([mini32_length - esp32_mount_corner, -esp32_mount_offset, 0])
         esp32_pillar_mount();
-    translate([mini32_length + esp32_mount_offset + wall, mini32_width - esp32_mount_corner, 0])
+    translate([mini32_length + esp32_mount_offset, mini32_width - esp32_mount_corner, 0])
         rotate(90) esp32_pillar_mount();
     translate([0, -esp32_mount_offset, 0]) difference() {
         cube([esp32_mount_corner, mini32_width - mini32_reset_width + 2*esp32_mount_offset, esp32_mount_height]);
-        translate([wall, esp32_mount_offset, esp32_mount_height - mini32_height])
+        translate([0, esp32_mount_offset, esp32_mount_height - mini32_height])
             cube([esp32_mount_corner, mini32_width - mini32_reset_width, mini32_height + ex]);
     }
 }
@@ -148,11 +156,10 @@ module esp32_pillar_mount() {
 }
 
 module esp32_fixers() {
-    corr = 0.5; // just for practical reasons to join fixers with inner wall
-    translate([-mini32_length - esp32_mount_offset, -esp32_mount_offset - corr, 0])
+    translate([-mini32_length - esp32_mount_offset, -esp32_mount_offset, 0])
         cube([esp32_mount_width, esp32_mount_width, box_bottom_height - wall2]);
     translate([-mini32_length - esp32_mount_offset, 
-                mini32_width - esp32_mount_width + esp32_mount_offset + corr, 0])
+                mini32_width - esp32_mount_width + esp32_mount_offset, 0])
         cube([esp32_mount_width, esp32_mount_width, box_bottom_height - wall2]);
 }
 
