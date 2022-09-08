@@ -13,6 +13,7 @@ box_length = screen_border + 4*led_matrix_width + 50;
 box_top_height = led_matrix_height + led_matrix_offset + module_pcb_height + wall + 0.4; 
 box_bottom_height = 8 + wall2;
 box_overlap_height = 5;
+box_overlap_tolerance = wall/4;
 slit_height = 1.5;
 slit_width = wall/2;
 
@@ -46,8 +47,8 @@ module draw_bottom() {
         // USB cutout
         translate([box_length - 2*wall - ex, 
                    box_width/2 - mini32_usb_width/2 - 1,
-                   box_bottom_height - mini32_usb_height - 1])
-            cube([3*wall, mini32_usb_width + 2, mini32_usb_height + 1 + ex]);
+                   box_bottom_height - mini32_usb_height])
+            cube([3*wall, mini32_usb_width + 2, mini32_usb_height + ex]);
         // Removing corners
         translate([0, 0, box_bottom_height]) 
             cube([4*wall, 4*wall, box_overlap_height + ex]);
@@ -69,21 +70,29 @@ module overlap() {
     inner_wall_height = box_bottom_height - wall2;
     difference() {
         cube([box_length - 2*wall, box_width - 2*wall, 
-                inner_wall_height + box_overlap_height]);
+                inner_wall_height]);
         translate([wall, wall, -ex])
             cube([box_length - 2*wall, box_width - 4*wall,
-                   inner_wall_height + box_overlap_height + 2*ex]);
+                   inner_wall_height + 2*ex]);
+    }
+    translate([box_overlap_tolerance, box_overlap_tolerance, inner_wall_height])
+    difference() {
+        cube([box_length - 2*wall - 2*box_overlap_tolerance, 
+                box_width - 2*wall - 2*box_overlap_tolerance, box_overlap_height]);
+         translate([wall - box_overlap_tolerance, wall - box_overlap_tolerance, -ex])
+            cube([box_length - 2*wall, box_width - 4*wall, box_overlap_height + 2*ex]);
     }
     translate([0, 0, inner_wall_height + box_overlap_height - 0.75*slit_height]) clips();
 }
 
 module clips() {
     clip_length = 5;
-    translate([0, box_width/2 - wall - clip_length/2, 0])
+    translate([box_overlap_tolerance, box_width/2 - wall - clip_length/2, 0])
         rotate(90) clip(clip_length);
     for (i = [1 : 5]) {
-        translate([i*(box_length - 2*wall)/6, -slit_width, 0]) clip(clip_length);
-        translate([i*(box_length - 2*wall)/6, box_width - 2*wall, 0]) 
+        translate([i*(box_length - 2*wall)/6, -slit_width + box_overlap_tolerance, 0])
+            clip(clip_length);
+        translate([i*(box_length - 2*wall)/6, box_width - 2*wall - box_overlap_tolerance, 0]) 
             clip(clip_length);
     }
 }
