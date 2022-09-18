@@ -3,11 +3,30 @@
 
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Infotron</title>
 
     <link rel="stylesheet" href="bootstrap.min.css">
+
+    <script>
+        function SendData(){
+            strLine = "";
+            if (document.getElementById("optDatetime").checked) {
+                var now = new Date();
+                var datetime = now.toISOString();
+                console.log(datetime);
+                strLine = "time=" + datetime;
+            }
+            if (document.getElementById("optMeteo").checked) strLine =  "weather=1";
+            if (document.getElementById("optText").checked) strLine = "text=" + document.getElementById("text").value;
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "infotron?" + strLine, true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            xhr.send("");
+            // ignore response ?
+        }
+    </script>
 </head>
 
 <body>
@@ -22,27 +41,27 @@
                     </div>
                     <div class="card-body">
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="displayOptions" id="datetime" value="1">
+                            <input class="form-check-input" type="radio" name="displayOptions" id="optDatetime" value="1">
                             <label class="form-check-label" for="datetime">
                               Date/time
                             </label>
                         </div>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="displayOptions" id="meteo" value="2">
+                            <input class="form-check-input" type="radio" name="displayOptions" id="optMeteo" value="2">
                             <label class="form-check-label" for="meteo">
                               Weather
                             </label>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="displayOptions" id="text" value="0" checked>
+                            <input class="form-check-input" type="radio" name="displayOptions" id="optText" value="0" checked>
                             <label class="form-check-label" for="text">
                               Text:
                             </label>
-                            <input id="text" type="text" class="form-control" placeholder="Enter text to display" aria-label="Text to display">
+                            <input id="text" type="text" class="form-control" maxlength="50" placeholder="Enter text to display" aria-label="Text to display">
                         </div>
                     </div>
                 </div>
-                <button id="ok" type="button" class="btn btn-secondary btn-lg btn-block">OK</button>
+                <button id="ok" type="submit" class="btn btn-secondary btn-lg btn-block" onclick="SendData()">OK</button>
             </div>
         </div>
     </div>
