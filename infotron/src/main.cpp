@@ -12,6 +12,7 @@
 #include <MD_Parola.h> 
 #include <MD_MAX72xx.h>
 #include <SPI.h>
+#include "Configuration.h"
 
 /* 
   Define the number of devices we have in the chain and the hardware interface SPI connection pins
@@ -34,9 +35,15 @@ textPosition_t scrollAlign = PA_LEFT;
 // Global message buffers
 #define BUF_SIZE  1024 // buffer size that should be able to handle data, increase size if needed
 char curMessage[BUF_SIZE] = {"Infotron starting..."}; // message currently on display
-char newMessage[BUF_SIZE] = {"Testing loop..."}; // next message to display
+char newMessage[BUF_SIZE] = {"New message"}; // next message to display
 
 void setup() {
+  // Read instructions on DEBUG_MODE in 'include/Debug.h' file
+  #ifdef DEBUG_MODE
+    Serial.begin(115200);
+    delay(3000);
+    DEBUGLN("Infotron started in debug mode");
+  #endif
   // Initailizing MD_Parola
   screen.begin();
   screen.displayClear();
