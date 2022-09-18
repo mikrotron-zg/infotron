@@ -13,6 +13,7 @@
 #include <MD_MAX72xx.h>
 #include <SPI.h>
 #include "Configuration.h"
+#include "WebServer.h"
 
 /* 
   Define the number of devices we have in the chain and the hardware interface SPI connection pins
@@ -35,7 +36,8 @@ textPosition_t scrollAlign = PA_LEFT;
 // Global message buffers
 #define BUF_SIZE  1024 // buffer size that should be able to handle data, increase size if needed
 char curMessage[BUF_SIZE] = {"Infotron starting..."}; // message currently on display
-char newMessage[BUF_SIZE] = {"New message"}; // next message to display
+char newMessage[BUF_SIZE] = {"Starting web server and access point"}; // next message to display
+bool newMessageReceived = true;
 
 void setup() {
   // Read instructions on DEBUG_MODE in 'include/Debug.h' file
@@ -44,6 +46,10 @@ void setup() {
     delay(3000);
     DEBUGLN("Infotron started in debug mode");
   #endif
+
+  // Start web server
+  startWebServer();
+
   // Initailizing MD_Parola
   screen.begin();
   screen.displayClear();
@@ -55,7 +61,10 @@ void setup() {
 
 void loop() {
   if (screen.displayAnimate()) {
-    strcpy(curMessage, newMessage);
+    if (newMessageReceived) {
+      strcpy(curMessage, newMessage);
+      newMessageReceived = false;
+    }
     screen.displayScroll(curMessage, scrollAlign, scrollEffect, frameDelay);
     screen.displayReset();
   }
