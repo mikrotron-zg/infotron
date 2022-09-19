@@ -47,6 +47,11 @@ void setup() {
     DEBUGLN("Infotron started in debug mode");
   #endif
 
+  // Mount SPIFFS file system
+  if(!SPIFFS.begin()){
+    DEBUGLN("SPIFFS mounting error");
+  }
+
   // Start web server
   startWebServer();
 
