@@ -27,6 +27,7 @@
 #define CS_PIN        5   // pinout tag: SS
 
 MD_Parola screen = MD_Parola(HARDWARE_TYPE, CS_PIN, MAX_DEVICES);
+DisplayMode displayMode = TEXT;
 
 // Scrolling parameters
 uint8_t frameDelay = 30;    // default frame delay value
@@ -38,6 +39,25 @@ textPosition_t scrollAlign = PA_LEFT;
 char curMessage[BUF_SIZE] = {"Infotron starting..."}; // message currently on display
 char newMessage[BUF_SIZE] = {"Starting web server and access point"}; // next message to display
 bool newMessageReceived = true;
+
+void display() {
+  // Handle display modes
+  switch (displayMode) {
+    case TEXT:
+      if (newMessageReceived) {
+      strcpy(curMessage, newMessage);
+      newMessageReceived = false;
+      screen.displayScroll(curMessage, scrollAlign, scrollEffect, frameDelay);
+      }
+      break;
+    case DATETIME:
+      // TODO
+      break;
+    case WEATHER:
+      // TODO
+      break;
+  }
+}
 
 void setup() {
   // Read instructions on DEBUG_MODE in 'include/Debug.h' file
@@ -61,16 +81,12 @@ void setup() {
   screen.displaySuspend(false);
 
   // Show start message
-  screen.displayScroll(curMessage, scrollAlign, scrollEffect, frameDelay);
+  display();
 }
 
 void loop() {
   if (screen.displayAnimate()) {
-    if (newMessageReceived) {
-      strcpy(curMessage, newMessage);
-      newMessageReceived = false;
-    }
-    screen.displayScroll(curMessage, scrollAlign, scrollEffect, frameDelay);
+    display();
     screen.displayReset();
   }
 }

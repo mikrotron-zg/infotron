@@ -13,7 +13,16 @@
     #include <ESPAsyncWebServer.h>
     #include "Debug.h"
 
+    // Display mode enum
+    // Enums
+    typedef enum {
+        TEXT,
+        DATETIME,
+        WEATHER
+    } DisplayMode;
+
     // Global variables
+    extern DisplayMode displayMode;
     extern bool newMessageReceived;
     extern char newMessage[];
 #endif
