@@ -2,6 +2,7 @@
 #include <AsyncTCP.h>
 #include "Configuration.h"
 #include "WebServer.h"
+#include "DateTimeHandler.h"
 
 AsyncWebServer server(80);
 
@@ -44,12 +45,19 @@ void onPostRequest(AsyncWebServerRequest *request) {
 
   // Handle parameters
   if (param == "text") {
+    // show custom text
     strcpy(newMessage, p->value().c_str());
     newMessageReceived = true;
+    if (displayMode == DATETIME) stopDateTime();
+    displayMode = TEXT;
   } else if (param == "time") {
-    // TODO show datetime
+    // show datetime
+    startDateTime(p->value());
+    displayMode = DATETIME;
   } else if (param == "weather") {
     // TODO get weather data
+    if (displayMode == DATETIME) stopDateTime();
+    displayMode = WEATHER;
   } else {
     DEBUGLN("Parameter unknown!");
     request->send(404);

@@ -25,4 +25,6 @@
     extern DisplayMode displayMode;
     extern bool newMessageReceived;
     extern char newMessage[];
+    extern uint16_t datetime[];
+    extern bool datetimeUpdated;
 #endif

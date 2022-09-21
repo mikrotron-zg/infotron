@@ -40,6 +40,10 @@ char curMessage[BUF_SIZE] = {"Infotron starting..."}; // message currently on di
 char newMessage[BUF_SIZE] = {"Starting web server and access point"}; // next message to display
 bool newMessageReceived = true;
 
+// Global datetime container
+uint16_t datetime[6] = {0, 0, 0, 0, 0, 0}; // day, month, year, hour, minute, second
+bool datetimeUpdated = false;
+
 void display() {
   // Handle display modes
   switch (displayMode) {
@@ -52,6 +56,13 @@ void display() {
       break;
     case DATETIME:
       // TODO
+      sprintf(newMessage, "%02d.%02d.%02d.",
+          datetime[0], datetime[1], datetime[2]);
+      DEBUGLN(newMessage);
+      sprintf(newMessage, "%02d:%02d:%02d",
+          datetime[3], datetime[4], datetime[5]);
+      DEBUGLN(newMessage);
+      datetimeUpdated = false;
       break;
     case WEATHER:
       // TODO
