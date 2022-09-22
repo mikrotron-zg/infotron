@@ -11,4 +11,5 @@
     // Public functions
     void startDateTime(String initTime);
     void stopDateTime();
+    void validateTime();
 #endif

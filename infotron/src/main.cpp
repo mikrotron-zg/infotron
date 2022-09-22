@@ -14,6 +14,7 @@
 #include <SPI.h>
 #include "Configuration.h"
 #include "WebServer.h"
+#include "DateTimeHandler.h"
 
 /* 
   Define the number of devices we have in the chain and the hardware interface SPI connection pins
@@ -55,14 +56,23 @@ void display() {
       }
       break;
     case DATETIME:
-      // TODO
-      sprintf(newMessage, "%02d.%02d.%02d.",
-          datetime[0], datetime[1], datetime[2]);
-      DEBUGLN(newMessage);
-      sprintf(newMessage, "%02d:%02d:%02d",
-          datetime[3], datetime[4], datetime[5]);
-      DEBUGLN(newMessage);
-      datetimeUpdated = false;
+      if (datetimeUpdated) {
+        validateTime();
+        if (datetime[5] == 20 || datetime[5] == 40) { // show date
+          sprintf(newMessage, "%02d.%02d.%04d.", datetime[0], datetime[1], datetime[2]);
+          datetimeUpdated = false;
+          screen.displayClear();
+          screen.displayScroll(newMessage, scrollAlign, scrollEffect, frameDelay*1.5);
+          break;
+        }
+        if (datetime[5]%2 == 0) { // show time
+          sprintf(curMessage, "%02d:%02d", datetime[3], datetime[4]);
+        } else {
+          sprintf(curMessage, "%02d %02d", datetime[3], datetime[4]);
+        }
+        datetimeUpdated = false;
+        screen.displayText(curMessage, PA_CENTER, screen.getSpeed(), 0, PA_NO_EFFECT, PA_NO_EFFECT);
+      }
       break;
     case WEATHER:
       // TODO
