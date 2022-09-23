@@ -45,6 +45,9 @@ bool newMessageReceived = true;
 uint16_t datetime[6] = {0, 0, 0, 0, 0, 0}; // day, month, year, hour, minute, second
 bool datetimeUpdated = false;
 
+// Other
+bool internetAvailable = false; // connect to router when needed only
+
 void display() {
   // Handle display modes
   switch (displayMode) {

@@ -8,6 +8,11 @@
     #define HTTP_PORT         80    // web server will listen for HTTP requests on port 80
 
     #include "Credentials.h" // please read the instructions in include/CredentialsTemplate.h file
+
+    // Global variables
+    extern bool internetAvailable;
+
     // Public functions
     void startWebServer();
+    bool startWiFiStation();
 #endif

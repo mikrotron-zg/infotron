@@ -3,6 +3,7 @@
 #include "Configuration.h"
 #include "WebServer.h"
 #include "DateTimeHandler.h"
+#include "WeatherInfo.h"
 
 AsyncWebServer server(80);
 
@@ -56,6 +57,7 @@ void onPostRequest(AsyncWebServerRequest *request) {
     displayMode = DATETIME;
   } else if (param == "weather") {
     // TODO get weather data
+    getWeatherInfo();
     if (displayMode == DATETIME) stopDateTime();
     displayMode = WEATHER;
   } else {
@@ -81,7 +83,7 @@ void startAccessPoint() {
   // Start access point
   WiFi.softAP(INFOTRON_SSID, INFOTRON_PASS);
   DEBUG("AP is running, ESP32 IP address: "); DEBUGLN(WiFi.softAPIP());
-  sprintf(newMessage, "%03d.%03d.%03d.%03d", 
+  sprintf(newMessage, "%d.%d.%d.%d", 
           WiFi.softAPIP()[0], WiFi.softAPIP()[1], WiFi.softAPIP()[2], WiFi.softAPIP()[3]);
   newMessageReceived = true;
 }
@@ -117,7 +119,7 @@ void startWiFi(bool startSTA = false) {
 
 void startWebServer() {
   // Start web server
-  startWiFi();
+  startWiFi(true);
 
   // HTTP requests handling
   server.on("/", HTTP_GET, onRootRequest); // root request

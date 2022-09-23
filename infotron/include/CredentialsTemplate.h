@@ -36,4 +36,7 @@
     //#define ALTERNATE_WIFI_SSID "Alternate WiFi SSID here"
     //#define ALTERNATE_WIFI_PASS "Alternate WiFi password here"
 
+    // API keys - any API key you need to retrieve data, we're 
+    // using openweathermap.org API key here:
+    #define WEATHER_API_KEY ""
 #endif
