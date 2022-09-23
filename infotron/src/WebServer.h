@@ -9,9 +9,6 @@
 
     #include "Credentials.h" // please read the instructions in include/CredentialsTemplate.h file
 
-    // Global variables
-    extern bool internetAvailable;
-
     // Public functions
     void startWebServer();
     bool startWiFiStation();

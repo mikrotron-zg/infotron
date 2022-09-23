@@ -45,40 +45,71 @@ bool newMessageReceived = true;
 uint16_t datetime[6] = {0, 0, 0, 0, 0, 0}; // day, month, year, hour, minute, second
 bool datetimeUpdated = false;
 
-// Other
-bool internetAvailable = false; // connect to router when needed only
+// Global weather info container
+WeatherInfo weatherInfo = {0, 0, 0, false, 0};
 
-void display() {
-  // Handle display modes
-  switch (displayMode) {
-    case TEXT:
-      if (newMessageReceived) {
-      strcpy(curMessage, newMessage);
-      newMessageReceived = false;
-      screen.displayScroll(curMessage, scrollAlign, scrollEffect, frameDelay);
-      }
+void displayText() {
+  // Handle custom text display
+  if (newMessageReceived) {
+    strcpy(curMessage, newMessage);
+    newMessageReceived = false;
+    screen.displayScroll(curMessage, scrollAlign, scrollEffect, frameDelay);
+  }
+}
+
+void displayDateTime() {
+  // Handle date/time display
+  if (datetimeUpdated) {
+    validateTime();
+    if (datetime[5] == 20 || datetime[5] == 40) { // show date
+      sprintf(newMessage, "%02d.%02d.%04d.", datetime[0], datetime[1], datetime[2]);
+      datetimeUpdated = false;
+      screen.displayClear();
+      screen.displayScroll(newMessage, scrollAlign, scrollEffect, frameDelay*1.5);
+      return;
+    }
+    if (datetime[5]%2 == 0) { // show time
+      sprintf(curMessage, "%02d:%02d", datetime[3], datetime[4]);
+    } else {
+      sprintf(curMessage, "%02d %02d", datetime[3], datetime[4]);
+    }
+    datetimeUpdated = false;
+    screen.displayText(curMessage, PA_CENTER, screen.getSpeed(), 0, PA_NO_EFFECT, PA_NO_EFFECT);
+  }
+}
+
+void displayWeatherInfo() {
+  // Handle weather info display
+  if (!weatherInfo.isValid) { // no internet connection or server failure
+    sprintf(newMessage, "Can't access weather data");
+    newMessageReceived = true;
+    displayMode = TEXT;
+    return;
+  }
+
+  if (weatherInfo.showing == 0) { // first time showing weather info
+    sprintf(curMessage, "%d \xB0""C", weatherInfo.temp);
+    screen.displayText(curMessage, PA_CENTER, screen.getSpeed(), MAX_SCREEN_TIME, PA_GROW_UP, PA_GROW_DOWN);
+    weatherInfo.showing++;
+    return;
+  }
+
+  switch (weatherInfo.showing) {
+    // TODO
+    case 1:
+      sprintf(curMessage, "%d%% RH", weatherInfo.humidity);
+      screen.displayText(curMessage, PA_CENTER, screen.getSpeed(), MAX_SCREEN_TIME, PA_GROW_UP, PA_GROW_DOWN);
+      weatherInfo.showing++;
       break;
-    case DATETIME:
-      if (datetimeUpdated) {
-        validateTime();
-        if (datetime[5] == 20 || datetime[5] == 40) { // show date
-          sprintf(newMessage, "%02d.%02d.%04d.", datetime[0], datetime[1], datetime[2]);
-          datetimeUpdated = false;
-          screen.displayClear();
-          screen.displayScroll(newMessage, scrollAlign, scrollEffect, frameDelay*1.5);
-          break;
-        }
-        if (datetime[5]%2 == 0) { // show time
-          sprintf(curMessage, "%02d:%02d", datetime[3], datetime[4]);
-        } else {
-          sprintf(curMessage, "%02d %02d", datetime[3], datetime[4]);
-        }
-        datetimeUpdated = false;
-        screen.displayText(curMessage, PA_CENTER, screen.getSpeed(), 0, PA_NO_EFFECT, PA_NO_EFFECT);
-      }
+    case 2:
+      sprintf(curMessage, "%dhPa", weatherInfo.pressure);
+      screen.displayText(curMessage, PA_CENTER, screen.getSpeed(), MAX_SCREEN_TIME, PA_GROW_UP, PA_GROW_DOWN);
+      weatherInfo.showing++;
       break;
-    case WEATHER:
-      // TODO
+    case 3:
+      sprintf(curMessage, "%d \xB0""C", weatherInfo.temp);
+      screen.displayText(curMessage, PA_CENTER, screen.getSpeed(), MAX_SCREEN_TIME, PA_GROW_UP, PA_GROW_DOWN);
+      weatherInfo.showing = 1;
       break;
   }
 }
@@ -105,12 +136,23 @@ void setup() {
   screen.displaySuspend(false);
 
   // Show start message
-  display();
+  displayText();
 }
 
 void loop() {
   if (screen.displayAnimate()) {
-    display();
-    screen.displayReset();
+    switch (displayMode) {
+      case TEXT:
+        displayText();
+        screen.displayReset();
+        break;
+      case DATETIME:
+        displayDateTime();
+        break;
+      case WEATHER:
+        displayWeatherInfo();
+        break;
+    } 
+    
   }
 }

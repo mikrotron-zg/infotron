@@ -7,6 +7,7 @@
     #define CONFIGURATION_H
     // Settings
     #define DEBUG_MODE // please read the instructions in include/Debug.h file
+    #define MAX_SCREEN_TIME 5000 // in miliseconds
 
     // Includes
     #include <SPIFFS.h>
@@ -14,12 +15,20 @@
     #include "Debug.h"
 
     // Display mode enum
-    // Enums
     typedef enum {
         TEXT,
         DATETIME,
         WEATHER
     } DisplayMode;
+
+    // Weather info struct
+    struct WeatherInfo {
+        int temp;
+        int humidity;
+        int pressure;
+        bool isValid;
+        int showing;
+    };
 
     // Global variables
     extern DisplayMode displayMode;
@@ -27,4 +36,5 @@
     extern char newMessage[];
     extern uint16_t datetime[];
     extern bool datetimeUpdated;
+    extern WeatherInfo weatherInfo;
 #endif

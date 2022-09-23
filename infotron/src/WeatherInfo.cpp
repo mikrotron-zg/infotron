@@ -4,9 +4,28 @@
 #include "WeatherInfo.h"
 #include "WebServer.h"
 
+
+void parseWeatherInfo(String input) {
+    JSONVar root = JSON.parse(input);
+    if (JSON.typeof(root) == "undefined") {
+        DEBUGLN("Parsing input failed!");
+        weatherInfo.isValid = false;
+        return;
+    }
+
+    JSONVar main = root["main"]; // we only need basic weather info
+    JSONVar keys = main.keys();
+    weatherInfo.temp = (double)main[keys[0]] + 0.5;
+    weatherInfo.pressure = main[keys[4]];
+    weatherInfo.humidity = main[keys[5]];
+    weatherInfo.isValid = true;
+    weatherInfo.showing = 0;
+}
+
 void getWeatherInfo() {
+    // Send API call to weather info provider
     if (!startWiFiStation()) { // abort if no internet connection
-        internetAvailable = false;
+        weatherInfo.isValid = false;
         return;
     }
     
@@ -19,10 +38,12 @@ void getWeatherInfo() {
     int responseCode = http.GET();
     String response = "";
 
-    if (responseCode > 0) {
-        DEBUG("Response code: "); DEBUGLN(responseCode);
+    DEBUG("Response code: "); DEBUGLN(responseCode);
+    if (responseCode > 0) { 
         response = http.getString();
         DEBUGLN(response);
+        parseWeatherInfo(response);
+    } else {
+        weatherInfo.isValid = false;
     }
-
 }

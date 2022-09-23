@@ -56,7 +56,7 @@ void onPostRequest(AsyncWebServerRequest *request) {
     startDateTime(p->value());
     displayMode = DATETIME;
   } else if (param == "weather") {
-    // TODO get weather data
+    // get weather data
     getWeatherInfo();
     if (displayMode == DATETIME) stopDateTime();
     displayMode = WEATHER;
