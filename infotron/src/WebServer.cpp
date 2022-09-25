@@ -83,7 +83,7 @@ void startAccessPoint() {
   // Start access point
   WiFi.softAP(INFOTRON_SSID, INFOTRON_PASS);
   DEBUG("AP is running, ESP32 IP address: "); DEBUGLN(WiFi.softAPIP());
-  sprintf(newMessage, "%d.%d.%d.%d", 
+  sprintf(newMessage, "My IP address: %d.%d.%d.%d", 
           WiFi.softAPIP()[0], WiFi.softAPIP()[1], WiFi.softAPIP()[2], WiFi.softAPIP()[3]);
   newMessageReceived = true;
 }

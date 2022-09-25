@@ -37,8 +37,8 @@ textPosition_t scrollAlign = PA_LEFT;
 
 // Global message buffers
 #define BUF_SIZE  1024 // buffer size that should be able to handle data, increase size if needed
-char curMessage[BUF_SIZE] = {"Infotron starting..."}; // message currently on display
-char newMessage[BUF_SIZE] = {"Starting web server and access point"}; // next message to display
+char curMessage[BUF_SIZE] = {""}; // message currently on display
+char newMessage[BUF_SIZE] = {"Infotron starting..."}; // next message to display
 bool newMessageReceived = true;
 
 // Global datetime container
@@ -127,9 +127,6 @@ void setup() {
     DEBUGLN("SPIFFS mounting error");
   }
 
-  // Start web server
-  startWebServer();
-
   // Initailizing MD_Parola
   screen.begin();
   screen.displayClear();
@@ -137,6 +134,9 @@ void setup() {
 
   // Show start message
   displayText();
+
+  // Start web server
+  startWebServer();
 }
 
 void loop() {

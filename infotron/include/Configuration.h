@@ -6,7 +6,7 @@
 #ifndef CONFIGURATION_H
     #define CONFIGURATION_H
     // Settings
-    #define DEBUG_MODE // please read the instructions in include/Debug.h file
+    #define DEBUG_MODE // comment out for production, read the instructions in include/Debug.h file
     #define MAX_SCREEN_TIME 5000 // in miliseconds
 
     // Includes
