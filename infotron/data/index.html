@@ -11,6 +11,7 @@
 
     <script>
         function SendData(){
+            document.getElementById("ok").disabled = true;
             strLine = "";
             if (document.getElementById("optDatetime").checked) {
                 var now = new Date();
@@ -24,7 +25,15 @@
             xhr.open("POST", "infotron?" + strLine, true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
             xhr.send("");
-            // ignore response ?
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4) {
+                    console.log("Status: " + xhr.status);
+                    document.getElementById("ok").disabled = false;
+                }
+            }
+        }
+        function ChangeOption() {
+            document.getElementById("optText").checked = true;
         }
     </script>
 </head>
@@ -57,7 +66,8 @@
                             <label class="form-check-label" for="text">
                               Text:
                             </label>
-                            <input id="text" type="text" class="form-control" maxlength="50" placeholder="Enter text to display" aria-label="Text to display">
+                            <input id="text" type="text" class="form-control" maxlength="50" onfocus="ChangeOption()" 
+                                    placeholder="Enter text to display" aria-label="Text to display">
                         </div>
                     </div>
                 </div>
