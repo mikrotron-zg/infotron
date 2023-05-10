@@ -80,6 +80,22 @@ module bottom_shell() {
         translate([wall, wall, wall2])
              cube([box_length - 2*wall, box_width - 2*wall, 
                     box_bottom_height - wall2 + ex]);
+        translate([box_length*0.25, box_width/2, -ex]) wall_mount();
+        translate([box_length*0.75, box_width/2, -ex]) wall_mount();
+    }
+}
+
+module wall_mount() {
+    $fn = 100;
+    slit_width = 4;
+    slit_length = 2;
+    opening_dia = 8;
+    translate([0, slit_length/4 + slit_width/4 + opening_dia/4]) {
+        cylinder(d = slit_width, h = box_bottom_height + 2*ex);
+        translate([-slit_width/2, -slit_length - slit_width/2 - opening_dia/2, 0]) 
+            cube([slit_width, slit_length + slit_width/2 + opening_dia/2, box_bottom_height + 2*ex]);
+        translate([0, -slit_length - opening_dia/2, 0])
+            cylinder(d = opening_dia, h = box_bottom_height + 2*ex);
     }
 }
 
