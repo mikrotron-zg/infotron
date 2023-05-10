@@ -1,12 +1,22 @@
 /*
-  INFOTRON
-  Simple info screen based on ESP32 and LED matrix display, controlled via integrated web app
-
-  Author: Tomislav Preksavec, Mikrotron d.o.o. Zagreb, mikrotron@mikrotron.hr
-  Date: 11/2021
-  License: GNU GPL v3 - please see the LICENSE file on the project root for more details
-
-*/
+ * This file is part of Infotron project (https://github.com/mikrotron-zg/infotron)
+ * developed by Mikrotron d.o.o. (http://mikrotron.hr).
+ * This is the main program file with setup and main program loop.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version. See the LICENSE file at the 
+ * top-level directory of this distribution for details 
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 #include <Arduino.h>
 #include <MD_Parola.h> 
@@ -48,8 +58,14 @@ bool datetimeUpdated = false;
 // Global weather info container
 WeatherInfo weatherInfo = {0, 0, 0, false, 0};
 
+/**
+ * @brief Handles custom text display.
+ * 
+ * Reads the contents of newMessage and sets it as a  
+ * current message to display, then scrolls the message 
+ * on a display.
+ */
 void displayText() {
-  // Handle custom text display
   if (newMessageReceived) {
     strcpy(curMessage, newMessage);
     newMessageReceived = false;
@@ -57,6 +73,11 @@ void displayText() {
   }
 }
 
+/**
+ * @brief Handles date/time display.
+ * 
+ * Displays date and time received from the web app.
+ */
 void displayDateTime() {
   // Handle date/time display
   if (datetimeUpdated) {
@@ -78,6 +99,11 @@ void displayDateTime() {
   }
 }
 
+/**
+ * @brief Handles weather info display.
+ * 
+ * Displays weather info received from external source.
+ */
 void displayWeatherInfo() {
   // Handle weather info display
   if (!weatherInfo.isValid) { // no internet connection or server failure
@@ -114,6 +140,11 @@ void displayWeatherInfo() {
   }
 }
 
+/**
+ * @brief Program entry point, runs only once.
+ * 
+ * Initializes the screen and starts web server.
+ */
 void setup() {
   // Read instructions on DEBUG_MODE in 'include/Debug.h' file
   #ifdef DEBUG_MODE
@@ -139,6 +170,11 @@ void setup() {
   startWebServer();
 }
 
+/**
+ * @brief Program main loop.
+ * 
+ * Handles screen display mode.
+ */
 void loop() {
   if (screen.displayAnimate()) {
     switch (displayMode) {
@@ -153,6 +189,5 @@ void loop() {
         displayWeatherInfo();
         break;
     } 
-    
   }
 }
