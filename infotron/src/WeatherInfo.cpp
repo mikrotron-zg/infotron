@@ -19,12 +19,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include <HTTPClient.h>
 #include <Arduino_JSON.h>
 #include "Configuration.h"
 #include "WeatherInfo.h"
 #include "WebServer.h"
-
 
 void parseWeatherInfo(String input) {
     // Parse received JSON file
@@ -46,26 +44,9 @@ void parseWeatherInfo(String input) {
 
 void getWeatherInfo() {
     // Send API call to weather info provider
-    if (!startWiFiStation()) { // abort if no internet connection
-        weatherInfo.isValid = false;
-        return;
-    }
-    
     String url = WEATHER_API_PREFIX;
     url += "lat=" + String(LATITUDE) + "&lon=" + String(LONGITUDE) +
            "&units=metric&appid=" + WEATHER_API_KEY;
     DEBUG("sending: "); DEBUGLN(url);
-    HTTPClient http;
-    http.begin(url);
-    int responseCode = http.GET();
-    String response = "";
-
-    DEBUG("Response code: "); DEBUGLN(responseCode);
-    if (responseCode > 0) { 
-        response = http.getString();
-        DEBUGLN(response);
-        parseWeatherInfo(response);
-    } else {
-        weatherInfo.isValid = false;
-    }
+    parseWeatherInfo(getApiResponse(url));
 }

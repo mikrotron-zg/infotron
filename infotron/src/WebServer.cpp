@@ -21,6 +21,7 @@
 
 #include <WiFi.h>
 #include <AsyncTCP.h>
+#include <HTTPClient.h>
 #include "Configuration.h"
 #include "WebServer.h"
 #include "DateTimeHandler.h"
@@ -151,4 +152,24 @@ void startWebServer() {
 
   server.begin();
   DEBUGLN("HTTP server started");
+}
+
+String getApiResponse(String url, String headerName, String headerValue) {
+  String response = "";
+
+  // Return empty string if there is no WiFi connection
+  if (!startWiFiStation()) return response;
+
+  HTTPClient http;
+  if (headerName != "") http.addHeader(headerName, headerValue);
+  http.begin(url);
+  int responseCode = http.GET();
+
+  DEBUG("Response code: "); DEBUGLN(responseCode);
+  if (responseCode > 0) { 
+      response = http.getString();
+      DEBUGLN(response);
+  }
+
+  return response;
 }

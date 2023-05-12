@@ -31,6 +31,7 @@
      * Handles basic HTTP requests on port defined by HTTP_PORT constant.
      */
     void startWebServer();
+
     /**
      * @brief Starts WiFi in station (STA) mode.
      * 
@@ -38,4 +39,22 @@
      *          false if not started.
      */    
     bool startWiFiStation();
+    
+    /**
+     * @brief Gets response from RESTful API service.
+     * 
+     * Some services expect API key in a HTTP header, so this is added
+     * as optional parameters.
+     * 
+     * @param url String containing API defined url.
+     * 
+     * @param headerName Optional, empty string by default.
+     * 
+     * @param headerValue Optional, empty string by default.
+     * 
+     * @returns String returned by RESTful service, check API docs for
+     *          service to parse the result (in most cases it's JASON).
+     *          In case of error, returns empty string.
+     */ 
+    String getApiResponse(String url, String headerName = "", String headerValue = "");
 #endif
