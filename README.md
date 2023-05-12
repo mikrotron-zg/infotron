@@ -18,4 +18,4 @@ The libraries used:
 
 ## Status
 
-This project is currently moving from the old platform and at this point is not usable, for working version please check _esp8266_ branch.
+Demo program on main branch works for the hardware listed above.
