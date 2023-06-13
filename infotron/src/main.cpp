@@ -58,6 +58,11 @@ bool datetimeUpdated = false;
 // Global weather info container
 WeatherInfo weatherInfo = {0, 0, 0, false, 0};
 
+// Global crypto info container
+CryptoInfo cryptoInfo[CRYPTO_NUM] = {{"BTC", 0, 0, 0},    // Bitcoin
+                                     {"ETH", 0, 0, 0}};    // Ethereum
+                                     //{"DOGE", 0, 0, 0}};  // Dogecoin
+
 /**
  * @brief Handles custom text display.
  * 
@@ -121,7 +126,6 @@ void displayWeatherInfo() {
   }
 
   switch (weatherInfo.showing) {
-    // TODO
     case 1:
       sprintf(curMessage, "%d%% RH", weatherInfo.humidity);
       screen.displayText(curMessage, PA_CENTER, screen.getSpeed(), MAX_SCREEN_TIME, PA_GROW_UP, PA_GROW_DOWN);
@@ -187,6 +191,9 @@ void loop() {
         break;
       case WEATHER:
         displayWeatherInfo();
+        break;
+      case CRYPTO:
+        // TODO handle crypto display
         break;
     } 
   }

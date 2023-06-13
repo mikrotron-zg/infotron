@@ -24,6 +24,7 @@
     // Settings
     #define DEBUG_MODE // comment out for production, read the instructions in include/Debug.h file
     #define MAX_SCREEN_TIME 5000 // in miliseconds
+    #define CRYPTO_NUM 2   // number of crypto currencies we're tracking
 
     // Includes
     #include <SPIFFS.h>
@@ -34,7 +35,8 @@
     typedef enum {
         TEXT,
         DATETIME,
-        WEATHER
+        WEATHER,
+        CRYPTO
     } DisplayMode;
 
     // Weather info struct
@@ -46,6 +48,14 @@
         int showing;
     };
 
+    // Crypto info struct
+    struct CryptoInfo {
+        const char ticker[10]; // e.g. BTC, ETH, DOGE
+        double lastValue;
+        double value;
+        float change;
+    };
+
     // Global variables
     extern DisplayMode displayMode;
     extern bool newMessageReceived;
@@ -53,4 +63,5 @@
     extern uint16_t datetime[];
     extern bool datetimeUpdated;
     extern WeatherInfo weatherInfo;
+    extern CryptoInfo cryptoInfo[];
 #endif

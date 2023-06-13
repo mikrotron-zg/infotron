@@ -20,6 +20,7 @@
                 strLine = "time=" + datetime;
             }
             if (document.getElementById("optMeteo").checked) strLine =  "weather=1";
+            if (document.getElementById("optCrypto").checked) strLine =  "crypto=1";
             if (document.getElementById("optText").checked) strLine = "text=" + document.getElementById("text").value;
             var xhr = new XMLHttpRequest();
             xhr.open("POST", "infotron?" + strLine, true);
@@ -59,6 +60,12 @@
                             <input class="form-check-input" type="radio" name="displayOptions" id="optMeteo" value="2">
                             <label class="form-check-label" for="meteo">
                               Weather
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="displayOptions" id="optCrypto" value="3">
+                            <label class="form-check-label" for="crypto">
+                              Crypto
                             </label>
                         </div>
                         <div class="form-check">

@@ -61,4 +61,6 @@
     // API keys - any API key you need to retrieve data, we're 
     // using openweathermap.org API key here:
     #define WEATHER_API_KEY ""
+    // and coinAPI.io API key here:
+    #define CRYPTO_API_KEY ""
 #endif

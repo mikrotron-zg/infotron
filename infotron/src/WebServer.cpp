@@ -26,6 +26,7 @@
 #include "WebServer.h"
 #include "DateTimeHandler.h"
 #include "WeatherInfo.h"
+#include "CryptoInfo.h"
 
 AsyncWebServer server(80);
 
@@ -78,10 +79,14 @@ void onPostRequest(AsyncWebServerRequest *request) {
     startDateTime(p->value());
     displayMode = DATETIME;
   } else if (param == "weather") {
-    // get weather data
+    // show weather data
     getWeatherInfo();
     if (displayMode == DATETIME) stopDateTime();
     displayMode = WEATHER;
+  } else if (param == "crypto") {
+    getCryptoInfo();
+    if (displayMode == DATETIME) stopDateTime();
+    displayMode = CRYPTO;
   } else {
     DEBUGLN("Parameter unknown!");
     request->send(404);
