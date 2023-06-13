@@ -166,6 +166,7 @@ String getApiResponse(String url, String headerName, String headerValue) {
   if (!startWiFiStation()) return response;
 
   HTTPClient http;
+  // CHECKME: adding header doesn't seem to work
   if (headerName != "") http.addHeader(headerName, headerValue);
   http.begin(url);
   int responseCode = http.GET();

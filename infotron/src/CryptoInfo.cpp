@@ -49,8 +49,6 @@ void updateCryptoInfo(int i, double currentRate) {
 
 void getCryptoInfo() {
   // Send API call to crypto info provider
-  String headerName = "X-CoinAPI-Key";
-  String headerValue = String(CRYPTO_API_KEY);
   
   for (int i = 0; i < CRYPTO_NUM; i++) {
     String url = CRYPTO_API_PREFIX;
