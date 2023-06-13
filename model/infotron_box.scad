@@ -71,6 +71,12 @@ module draw_bottom() {
             cube([4*wall, 4*wall, box_overlap_height + ex]);
         translate([0, box_width - 4*wall, box_bottom_height]) 
             cube([4*wall, 4*wall, box_overlap_height + ex]);
+        // Vent grill
+        translate([box_length - 0.85*mini32_length, box_width/5, -ex]) {
+            for (y = [0 : 5 : 3*box_width/5]) {
+                translate([0, y, 0]) rounded_rect(0.75*mini32_length, 2.5, wall2 + 2*ex, 1);
+            }
+        }
     }
 }
 
