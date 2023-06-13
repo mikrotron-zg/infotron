@@ -62,6 +62,7 @@ WeatherInfo weatherInfo = {0, 0, 0, false, 0};
 CryptoInfo cryptoInfo[CRYPTO_NUM] = {{"BTC", 0, 0, 0},    // Bitcoin
                                      {"ETH", 0, 0, 0}};    // Ethereum
                                      //{"DOGE", 0, 0, 0}};  // Dogecoin
+int currentCryptoInfo = -1; // index of crypto info currently on display
 
 /**
  * @brief Handles custom text display.
@@ -145,6 +146,22 @@ void displayWeatherInfo() {
 }
 
 /**
+ * @brief Handles crypto info display.
+ * 
+ * Displays crypto info received from external source.
+ */
+void displayCryptoInfo() {
+  currentCryptoInfo++;
+  if (currentCryptoInfo >= CRYPTO_NUM) currentCryptoInfo = 0;
+  char value[10];
+  char change[10];
+  dtostrf(cryptoInfo[currentCryptoInfo].value, 4, 2, value);
+  dtostrf(cryptoInfo[currentCryptoInfo].change*100, 4, 2, change);
+  sprintf(curMessage, "%s   $%s  (%s%%)", cryptoInfo[currentCryptoInfo].ticker, value, change);
+  screen.displayScroll(curMessage, scrollAlign, scrollEffect, frameDelay);
+}
+
+/**
  * @brief Program entry point, runs only once.
  * 
  * Initializes the screen and starts web server.
@@ -193,7 +210,8 @@ void loop() {
         displayWeatherInfo();
         break;
       case CRYPTO:
-        // TODO handle crypto display
+        displayCryptoInfo();
+        screen.displayReset();
         break;
     } 
   }
