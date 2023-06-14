@@ -35,6 +35,7 @@ double parseCryptoInfo(String input) {
 }
 
 void updateCryptoInfo(int i, double currentRate) {
+  // Save current rate and calculate change from last update if exists
   DEBUG("Current rate: "); DEBUGLN(currentRate);
   if (currentRate > 0) {
     cryptoInfo[i].lastValue = cryptoInfo[i].value;
@@ -49,7 +50,6 @@ void updateCryptoInfo(int i, double currentRate) {
 
 void getCryptoInfo() {
   // Send API call to crypto info provider
-  
   for (int i = 0; i < CRYPTO_NUM; i++) {
     String url = CRYPTO_API_PREFIX;
     DEBUG("Sending request for "); DEBUGLN(cryptoInfo[i].ticker);
@@ -57,4 +57,7 @@ void getCryptoInfo() {
     DEBUGLN(url);
     updateCryptoInfo(i, parseCryptoInfo(getApiResponse(url)));
   }
+
+  // Set last updated timestamp
+  cryptoInfoLastUpdated = millis();
 }

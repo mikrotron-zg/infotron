@@ -25,6 +25,7 @@
 #include "Configuration.h"
 #include "WebServer.h"
 #include "DateTimeHandler.h"
+#include "CryptoInfo.h"
 
 /* 
   Define the number of devices we have in the chain and the hardware interface SPI connection pins
@@ -63,6 +64,7 @@ CryptoInfo cryptoInfo[CRYPTO_NUM] = {{"BTC", 0, 0, 0},    // Bitcoin
                                      {"ETH", 0, 0, 0}};    // Ethereum
                                      //{"DOGE", 0, 0, 0}};  // Dogecoin
 int currentCryptoInfo = -1; // index of crypto info currently on display
+ulong cryptoInfoLastUpdated = 0; // last time crypto info was updated
 
 /**
  * @brief Handles custom text display.
@@ -151,6 +153,7 @@ void displayWeatherInfo() {
  * Displays crypto info received from external source.
  */
 void displayCryptoInfo() {
+  if ((millis() - cryptoInfoLastUpdated) > CRYPTOINFO_UPDATE_INTERVAL) getCryptoInfo();
   currentCryptoInfo++;
   if (currentCryptoInfo >= CRYPTO_NUM) currentCryptoInfo = 0;
   char value[10];

@@ -25,6 +25,7 @@
     #define DEBUG_MODE // comment out for production, read the instructions in include/Debug.h file
     #define MAX_SCREEN_TIME 5000 // in miliseconds
     #define CRYPTO_NUM 2   // number of crypto currencies we're tracking
+    #define CRYPTOINFO_UPDATE_INTERVAL 10*60*1000  // in miliseconds, default value is 10 minutes (10*60*1000)
 
     // Includes
     #include <SPIFFS.h>
@@ -64,4 +65,5 @@
     extern bool datetimeUpdated;
     extern WeatherInfo weatherInfo;
     extern CryptoInfo cryptoInfo[];
+    extern ulong cryptoInfoLastUpdated;
 #endif
